@@ -47,10 +47,6 @@ class Ball {
 		this.radius = 8;
 	}
 
-	intersect(v) {
-		return get_distance(this.pos, v) <= this.radius;
-	}
-
 	move(deltaTime) {
 		const dt = (deltaTime * 60) / 1000;
 		if (Math.random() < 0.4 * dt) {
