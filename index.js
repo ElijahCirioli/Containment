@@ -34,6 +34,10 @@ class Vec {
 	clone() {
 		return new Vec(this.x, this.y);
 	}
+
+	scaled(factor) {
+		return new Vec(this.x * factor, this.y * factor);
+	}
 }
 
 class Ball {
@@ -47,20 +51,21 @@ class Ball {
 		return get_distance(this.pos, v) <= this.radius;
 	}
 
-	move() {
-		if (Math.random() < 0.4) {
+	move(deltaTime) {
+		const dt = (deltaTime * 60) / 1000;
+		if (Math.random() < 0.4 * dt) {
 			trail.unshift(this.pos.clone());
 		}
 		if (trail.length > 15) {
 			trail.splice(trail.length - 1, 1);
 		}
-		this.pos.add(this.vel);
+		this.pos.add(this.vel.scaled(dt));
 	}
 }
 
 const center = new Vec(Math.floor(canvas.width / 2), Math.floor(canvas.height / 2));
 const radius = 130;
-let angle, score, highscore, launched, ball, speed, trail;
+let angle, score, highscore, launched, ball, speed, trail, lastTime;
 
 const setup = () => {
 	highscore = 0;
@@ -68,12 +73,15 @@ const setup = () => {
 	launched = false;
 	trail = [];
 	angle = -Math.PI / 2;
+	lastTime = Date.now();
 	requestAnimationFrame(update);
 };
 
 const update = () => {
+	const deltaTime = Date.now() - lastTime;
+	lastTime = Date.now(deltaTime);
 	if (ball) {
-		ball.move();
+		ball.move(deltaTime);
 		testForBounce();
 		testForLose();
 	}
